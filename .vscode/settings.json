@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.json": "cpp",
+        "system_error": "c",
+        "stdlib.h": "c",
+        "pb_decode.h": "c",
+        "pb_encode.h": "c"
+    }
+}
