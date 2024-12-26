@@ -9,10 +9,12 @@ project(Template_Project C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
-# Creates a pico-sdk subdirectory in our project for the libraries
+# Initialize the Pico SDK
 pico_sdk_init()
 
+# Add include directory for Nanopb
 include_directories($ENV{NANOPB_PATH})
+include_directories(src)
 
 # Add Nanopb source files as a library
 add_library(nanopb STATIC
@@ -21,16 +23,22 @@ add_library(nanopb STATIC
     $ENV{NANOPB_PATH}/pb_decode.c
 )
 
-# Add the executable
-add_executable(${PROJECT_NAME} main.c uart.pb.c)
+# Add the main executable
+add_executable(${PROJECT_NAME} 
+    src/main.c
+    src/uart.pb.c
+    src/nanopb.c
+)
 
-# Link libraries to the project
+# Link required libraries to the project
 target_link_libraries(${PROJECT_NAME}
-    pico_stdlib
-    nanopb
+    pico_stdlib          
+    tinyusb_device       
+    tinyusb_board        
+    nanopb               
 )
 
 # Pico-specific configuration
-pico_enable_stdio_usb(${PROJECT_NAME} 1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
+pico_enable_stdio_usb(${PROJECT_NAME} 1) 
+pico_enable_stdio_uart(${PROJECT_NAME} 0) 
 pico_add_extra_outputs(${PROJECT_NAME})

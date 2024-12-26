@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${default}",
-                "${env:PICO_SDK_PATH}/**"
+                "${env:PICO_SDK_PATH}/**",
+                "${env:NANOPB_PATH}/**"
             ],
             "defines": [],
             "cStandard": "c17",
