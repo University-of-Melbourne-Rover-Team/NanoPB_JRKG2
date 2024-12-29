@@ -23,19 +23,30 @@ add_library(nanopb STATIC
     $ENV{NANOPB_PATH}/pb_decode.c
 )
 
+
+
 # Add the main executable
 add_executable(${PROJECT_NAME} 
     src/main.c
-    src/uart.pb.c
+    src/proto/uart.pb.c
     src/nanopb.c
+    src/cdc_usb.c
 )
+
+
+#Adding PIO
+pico_generate_pio_header(${PROJECT_NAME} 
+                         ${CMAKE_CURRENT_LIST_DIR}/src/ws2812.pio 
+                         OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/src/generated)
+
 
 # Link required libraries to the project
 target_link_libraries(${PROJECT_NAME}
     pico_stdlib          
     tinyusb_device       
     tinyusb_board        
-    nanopb               
+    nanopb
+    hardware_pio               
 )
 
 # Pico-specific configuration

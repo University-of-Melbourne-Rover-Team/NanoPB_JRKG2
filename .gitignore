@@ -1,1 +1,5 @@
 .DS_Store
+src/generated/
+src/proto/uart.pb.c
+src/proto/uart.pb.h
+build/
