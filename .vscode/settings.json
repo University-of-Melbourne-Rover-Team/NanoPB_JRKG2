@@ -4,6 +4,7 @@
         "system_error": "c",
         "stdlib.h": "c",
         "pb_decode.h": "c",
-        "pb_encode.h": "c"
+        "pb_encode.h": "c",
+        "stdio.h": "c"
     }
 }

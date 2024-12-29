@@ -4,7 +4,7 @@
 
 #include <pb_encode.h>
 #include <pb_decode.h>
-#include "uart.pb.h"
+#include "proto/uart.pb.h"
 #include "stdio.h"
 #include "pico/stdlib.h"
 
