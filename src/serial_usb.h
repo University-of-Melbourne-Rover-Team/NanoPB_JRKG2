@@ -1,5 +1,5 @@
-#ifndef CDC_USB_H
-#define CDC_USB_H
+#ifndef SERIAL_USB_H
+#define SERIAL_USB_H
 
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
