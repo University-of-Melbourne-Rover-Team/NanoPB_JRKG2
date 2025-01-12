@@ -3,30 +3,26 @@
 
 syntax = "proto3";
 
-enum CMD_Type {
-  UNDEFINED_CMD = 0;
-  HANDSHAKE = 1;
-  SETDEV    = 2;
+enum DevKind {
+  A = 0;
+  DevAck = 1;
+  HostAck = 2;
+
+  MotorDriver = 3;
+  CamGimball = 4;
+  Science = 5;
+  Battery = 6;
+  ArmTelem = 7;
+  DebrisClear = 8;
+  ChasisLights = 9;
 }
 
-enum REQ_Value {
-    UNDEFINED_REQ = 0;
-    DevAck = 1;
-    HostAck = 2;
-
-    MotorDriver = 3;
-    CamGimball = 4;
-    Science = 5;
-    Battery = 6;
-    ArmTelem = 7;
-    DebrisClear = 8;
-    ChasisLights = 9;
+message Assignment {
+  DevKind asn = 1;
 }
 
 
-message Dev_Msg {
-  // Use small, unique field numbers
-  int32     uController = 1;
-  CMD_Type  cmd         = 2;
-  REQ_Value req         = 3;
+message Payload {
+  int32 temperature = 1;
+  uint32 acceleration = 2;
 }
