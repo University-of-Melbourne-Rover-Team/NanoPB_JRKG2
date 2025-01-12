@@ -6,8 +6,8 @@
 
 #include "stdlib.h"
 #include "nanopb.h"
+#include "serial_usb.h"
 
-#include "cdc_usb.h"
 
 
 #define BUFFER_SIZE 128
@@ -16,17 +16,8 @@
 #define RP2040_ZERO_BOARD 1
 #define RASP_PIPICO_BOARD 0
 
-// Main function
-int main(int argc, char **argv) {
+void start_LED(){
     
-    //Initialise I/O
-    stdio_init_all();
-    sleep_ms(1000);
-    data_t buffer;
-    uint8_t status;
-
-
-    //Start LED
     if(RP2040_ZERO_BOARD){
         PIO pio = pio0;
         int sm = 0;
@@ -35,11 +26,42 @@ int main(int argc, char **argv) {
         ws2812_program_init(pio, sm, offset, 16, 800000, true);
 
         //Setting LED to Red during startup
-        put_rgb(252, 0 , 0);
+        put_rgb(0, 0 , 0);
     }
 
+}
 
-    put_rgb(0, 252, 0);
+
+// Main function
+int main(int argc, char **argv) {
+    
+    //Initialise I/O
+    stdio_init_all();
+    stdio_usb_init();
+    sleep_ms(1000);
+    data_t buffer;
+    uint8_t status;
+
+    int start = 10U;
+
+
+    //Start LED
+    //start_LED();
+
+    while (start != 1U)
+    {   
+        printf("%c",(char) 0xff);
+        scanf("%i",&start);
+    }
+    
+
+    while (true)
+    {
+        usb_uart_task();
+    }
+    
 
     return 0;
 }
+
+

@@ -30,7 +30,7 @@ add_executable(${PROJECT_NAME}
     src/main.c
     src/proto/uart.pb.c
     src/nanopb.c
-    src/cdc_usb.c
+    src/serial_usb.c
 )
 
 
@@ -42,9 +42,7 @@ pico_generate_pio_header(${PROJECT_NAME}
 
 # Link required libraries to the project
 target_link_libraries(${PROJECT_NAME}
-    pico_stdlib          
-    tinyusb_device       
-    tinyusb_board        
+    pico_stdlib        
     nanopb
     hardware_pio               
 )
