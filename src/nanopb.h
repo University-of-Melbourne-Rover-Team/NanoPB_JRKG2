@@ -31,9 +31,10 @@
 #define DEBRIS_CLEAR      0x26
 #define CHASIS_LIGHTS     0x27
 
+#define UART_BUFFER 256
 typedef struct 
 {
-    uint8_t *data;
+    uint8_t data[UART_BUFFER];
     size_t data_len;
 }data_t;
 
