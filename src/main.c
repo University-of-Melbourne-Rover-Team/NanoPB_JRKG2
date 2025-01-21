@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
             rxBuffer.event = 0U;
             write_stdio(&txBuffer);
         } else {
-            sleep_ms(100);
+            sleep_ms(1);
         }
         
     }

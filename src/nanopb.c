@@ -16,6 +16,8 @@ uint8_t decode_message_req(const uint8_t *buffer, size_t message_length, Assignm
 
 
 void nanopb_error(data_t *response){
+    response->data[0] = 3U;
+    response->data_len = 1U;
 
 }
 
@@ -38,15 +40,23 @@ uint8_t process_request(data_t *request, data_t *response){
 
     if(!decode_message_req(request->data, request->data_len, &msg)){
         status = 0U;
+        nanopb_error(response);
     }
     
-    if(status = 0U){
-        //Won't happen
+    if(status != 0U){
+        switch (msg.asn)
+        {
+        case DevKind_DevAck:
+            msg.asn = DevKind_Battery;
+            status = encode_request(response, &msg);
+            break;
+    
+        default:
+            nanopb_error(response);
+            status = 0U;
+            break;
+        }
     }
-
-    /*Checking for correct uController*/
-
-    status = encode_request(response, &msg);
 
 
     return status;
