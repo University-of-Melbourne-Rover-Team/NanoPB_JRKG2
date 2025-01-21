@@ -32,17 +32,22 @@
 #define CHASIS_LIGHTS     0x27
 
 #define UART_BUFFER 256
+
+#define RX_BUFFER_OVERFLOW (1U << 31)
+#define RX_BUFFER_HAS_DATA (1U << 30)
+
 typedef struct 
 {
     uint8_t data[UART_BUFFER];
-    size_t data_len;
+    uint32_t data_len;
+    uint32_t event;
 }data_t;
 
 
-
-uint8_t decode_message_req(const uint8_t *buffer, size_t message_length, Dev_Msg *message);
-uint8_t process_request(data_t *buffer);
-uint8_t encode_request(data_t *buffer, uint8_t cmd, uint8_t req);
+void write_stdio(data_t *buff);
+uint8_t decode_message_req(const uint8_t *buffer, size_t message_length, Assignment *message);
+uint8_t process_request(data_t *request, data_t *response);
+uint8_t encode_request(data_t *buffer, Assignment *msg);
 
 
 #endif

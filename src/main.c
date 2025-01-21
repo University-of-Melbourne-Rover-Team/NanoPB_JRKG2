@@ -8,9 +8,12 @@
 #include "nanopb.h"
 #include "serial_usb.h"
 
+#define START_BYTES { 0x52, 0x50, 0x32, 0x30, 0x34, 0x30 } //RP2040
 
 
-#define BUFFER_SIZE 128
+
+data_t rxBuffer = {.data = {0U}, .data_len=0U, .event=0U};
+data_t txBuffer = {.data = {0U}, .data_len=0U, .event=0U};
 
 //Board Macro
 #define RP2040_ZERO_BOARD 1
@@ -31,33 +34,49 @@ void start_LED(){
 
 }
 
+void stdio_callback(void *param){
+    int byte;
+    rxBuffer.event |= RX_BUFFER_HAS_DATA;
+    while (true)
+    {
+       byte = stdio_getchar_timeout_us(10);
+       if(byte == PICO_ERROR_TIMEOUT)
+            break;
+        
+        
+        if(rxBuffer.data_len >= UART_BUFFER-1){
+            rxBuffer.event |= RX_BUFFER_OVERFLOW;
+            break;
+        }
+        
+        rxBuffer.data[rxBuffer.data_len++] = (uint8_t) byte;
+    }
+    
+}
+
 
 // Main function
 int main(int argc, char **argv) {
     
     //Initialise I/O
     stdio_init_all();
-    stdio_usb_init();
-    sleep_ms(1000);
-    data_t buffer;
-    uint8_t status;
-
-    int start = 10U;
+    //Todo Implement handshake
 
 
-    //Start LED
-    //start_LED();
-
-    while (start != 1U)
-    {   
-        printf("%c",(char) 0xff);
-        scanf("%i",&start);
-    }
-    
+    stdio_set_chars_available_callback(stdio_callback, NULL);
 
     while (true)
-    {
-        usb_uart_task();
+    {   
+        if( rxBuffer.event & RX_BUFFER_HAS_DATA){
+            process_request(&rxBuffer, &txBuffer);
+            rxBuffer.data_len = 0U;
+            rxBuffer.event = 0U;
+            rxBuffer.event &= ~RX_BUFFER_HAS_DATA;
+            write_stdio(&txBuffer);
+        } else {
+            sleep_ms(1);
+        }
+        
     }
     
 
