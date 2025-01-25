@@ -1,19 +1,6 @@
 #include "nanopb.h"
 
 
-uint8_t decode_message_req(const uint8_t *buffer, size_t message_length, Assignment *message){
-
-    /* Function to decoding message from ProtoBuf*/
-    pb_istream_t stream = pb_istream_from_buffer(buffer, message_length);
-
-    if(!pb_decode(&stream, Assignment_fields, message))
-        return 0U;
-
-
-    return 1U;
-    
-}
-
 
 void nanopb_error(data_t *response){
     response->data[0] = 3U;
@@ -29,6 +16,7 @@ void write_stdio(data_t *buff){
     for(idx = 0U; idx < buff->data_len; idx++){
         buff->data[idx] = 0U;
     }
+    buff->data_len = 0U;
     
 }
 
@@ -44,30 +32,22 @@ uint8_t process_request(data_t *request, data_t *response){
     pb_ostream_t stream;
     if(request->data[0] == 0U && request->data_len == 1U){
         msg.asn = DevKind_Battery;
-        stream = pb_ostream_from_buffer(response->data, BUFFER_SIZE);
-        pb_encode(&stream, Assignment_fields, &msg);
-        response->data_len = stream.bytes_written;
-        status = 1U;
+        status = encode_request(response, &msg);
         return status;
     }
 
+    status = decode_request(request, &msg);
+    if(status == 0U){
+        nanopb_error(response);
+    }
 
-    pb_istream_t out_stream = pb_istream_from_buffer(request->data, request->data_len);
-    status = pb_decode(&out_stream, Assignment_fields, &msg);
-
-    // if(!decode_message_req(request->data, request->data_len, &msg)){
-    //     status = 0U;
-    //     nanopb_error(response);
-    // }
     
-    if(!status){
+    if(status){
         switch (msg.asn)
         {
         case DevKind_HostAck:
             msg.asn = DevKind_DevAck;
-            stream = pb_ostream_from_buffer(response->data, BUFFER_SIZE);
-            pb_encode(&stream, Assignment_fields, &msg);
-            response->data_len = stream.bytes_written;
+            status = encode_request(response, &msg);
             break;
     
         default:
@@ -82,13 +62,29 @@ uint8_t process_request(data_t *request, data_t *response){
 }
 
 uint8_t encode_request(data_t *buffer, Assignment *msg){
-    
-    pb_ostream_t stream = pb_ostream_from_buffer(buffer->data, BUFFER_SIZE);
-    
-    if(!pb_encode(&stream, Assignment_fields, msg))
+    pb_ostream_t stream;
+    stream = pb_ostream_from_buffer(buffer->data, PROTO_PACKET_SIZE);
+    bool status = 0U;
+    status = pb_encode(&stream, Assignment_fields, msg);
+
+    if(!status)
         return 0U;
-    
+
     buffer->data_len = stream.bytes_written;
 
     return 1U;
+}
+
+
+uint8_t decode_request(data_t *buff, Assignment *message){
+
+    /* Function to decoding message from ProtoBuf*/
+    bool status;
+    pb_istream_t stream = pb_istream_from_buffer(buff->data, buff->data_len);
+    status = pb_decode(&stream, Assignment_fields, message);
+    if(!status)
+        return 0U;
+
+    return 1U;
+    
 }

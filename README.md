@@ -3,7 +3,7 @@
 To use this template, the following are required:
 
 1. Install Docker
-2. nstall Visual Studio Code (VS Code) and the Dev Container Extension
+2. Install Visual Studio Code (VS Code) and the Dev Container Extension
 
 ## Accessing Dev Container
 
@@ -20,7 +20,9 @@ To use Dev Container:
 Before you can build the template project you need to generate the protobuff file which is done via:
 
 ```
+cd src/proto
 python3 $NANOPB_PATH/generator/nanopb_generator.py uart.proto 
+cd ../..
 ```
 
 Once the protobuff file is build then you can apply the following step to build the project:

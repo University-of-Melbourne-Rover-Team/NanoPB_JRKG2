@@ -7,8 +7,8 @@
 #include "stdlib.h"
 #include "nanopb.h"
 #include "serial_usb.h"
+#include "hardware/sync.h"
 
-#define START_BYTES { 0x52, 0x50, 0x32, 0x30, 0x34, 0x30 } //RP2040
 
 
 
@@ -44,7 +44,7 @@ void stdio_callback(void *param){
             break;
         
         
-        if(rxBuffer.data_len >= UART_BUFFER-1){
+        if(rxBuffer.data_len >= USB_UART_BUFFER-1U){
             rxBuffer.event |= RX_BUFFER_OVERFLOW;
             break;
         }
@@ -60,19 +60,18 @@ int main(int argc, char **argv) {
     
     //Initialise I/O
     stdio_init_all();
-    //Todo Implement handshake
-
-
+    uint32_t irq_status;
     stdio_set_chars_available_callback(stdio_callback, NULL);
 
     while (true)
     {   
         if( rxBuffer.event & RX_BUFFER_HAS_DATA){
+            irq_status = save_and_disable_interrupts();
             process_request(&rxBuffer, &txBuffer);
             rxBuffer.data_len = 0U;
             rxBuffer.event = 0U;
-            rxBuffer.event &= ~RX_BUFFER_HAS_DATA;
             write_stdio(&txBuffer);
+            restore_interrupts_from_disabled(irq_status);
         } else {
             sleep_ms(1);
         }
