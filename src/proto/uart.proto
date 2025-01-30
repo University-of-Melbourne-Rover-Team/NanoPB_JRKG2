@@ -26,3 +26,9 @@ message Payload {
   int32 temperature = 1;
   uint32 acceleration = 2;
 }
+
+message MotorDriver_JRK {
+  oneof motor_cmd {
+    sint32 velocity = 1;
+  }
+}

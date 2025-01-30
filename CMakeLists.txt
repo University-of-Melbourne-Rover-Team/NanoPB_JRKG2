@@ -15,6 +15,10 @@ pico_sdk_init()
 # Add include directory for Nanopb
 include_directories($ENV{NANOPB_PATH})
 include_directories(src)
+# Add subdirectories
+add_subdirectory(src)
+add_subdirectory(lib/JRKG2)
+
 
 # Add Nanopb source files as a library
 add_library(nanopb STATIC
@@ -44,7 +48,8 @@ pico_generate_pio_header(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     pico_stdlib        
     nanopb
-    hardware_pio               
+    hardware_pio
+    jrkg2               
 )
 
 # Pico-specific configuration
