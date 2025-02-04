@@ -1,0 +1,3 @@
+[submodule "jrkg2"]
+	path = jrkg2
+	url = https://github.com/University-of-Melbourne-Rover-Team/JRK_G2_RP2040.git

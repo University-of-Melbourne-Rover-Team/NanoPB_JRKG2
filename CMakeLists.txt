@@ -15,9 +15,10 @@ pico_sdk_init()
 # Add include directory for Nanopb
 include_directories($ENV{NANOPB_PATH})
 include_directories(src)
+
 # Add subdirectories
 add_subdirectory(src)
-add_subdirectory(lib/JRKG2)
+add_subdirectory(jrkg2)
 
 
 # Add Nanopb source files as a library
@@ -37,7 +38,6 @@ add_executable(${PROJECT_NAME}
     src/serial_usb.c
 )
 
-
 #Adding PIO
 pico_generate_pio_header(${PROJECT_NAME} 
                          ${CMAKE_CURRENT_LIST_DIR}/src/ws2812.pio 
@@ -49,7 +49,7 @@ target_link_libraries(${PROJECT_NAME}
     pico_stdlib        
     nanopb
     hardware_pio
-    jrkg2               
+    jrkg2_v2               
 )
 
 # Pico-specific configuration
